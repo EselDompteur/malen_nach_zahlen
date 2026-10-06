@@ -447,7 +447,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
       if (!dir.existsSync()) {
         dir.createSync(recursive: true);
       }
-      final ts = DateTime.now().toString().replaceAll(RegExp(r"[:.- ]"), "_");
+      final ts = DateTime.now().toString().replaceAll(":", "_").replaceAll(".", "_").replaceAll("-", "_").replaceAll(" ", "_");
       final filePath = "$dirPath/kunstwerk_$ts.png";
       final bd = await paintLayer!.toByteData(format: dart_ui.ImageByteFormat.png);
       if (bd != null) {
