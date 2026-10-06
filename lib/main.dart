@@ -14,7 +14,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-enum MalModus { stift, eimer }
+enum MalModus { stift, eimer, pipette }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -338,6 +338,29 @@ class _PaintCanvasState extends State<PaintCanvas> {
     );
   }
 
+  Future<void> executePipette(Offset pos) async {
+    if (templateImage == null) return;
+    int tx = pos.dx.toInt();
+    int ty = pos.dy.toInt();
+    int w = templateImage!.width;
+    int h = templateImage!.height;
+    if (tx < 0 || tx >= w || ty < 0 || ty >= h) return;
+    final bgD = await templateImage!.toByteData(
+      format: dart_ui.ImageByteFormat.rawRgba,
+    );
+    if (bgD == null) return;
+    final bgP = bgD.buffer.asUint32List();
+    int v = bgP[ty * w + tx];
+    int r = v & 0xFF;
+    int g = (v >> 8) & 0xFF;
+    int b = (v >> 16) & 0xFF;
+    int a = (v >> 24) & 0xFF;
+    setState(() {
+      activeColor = Color.fromARGB(a == 0 ? 255 : a, r, g, b);
+      aktuellerModus = MalModus.stift; // Sofort wieder zurueck zum Stift!
+    });
+  }
+
   Future<void> executeFloodFill(Offset pos) async {
     if (templateImage == null || paintLayer == null) return;
     int tx = pos.dx.toInt();
@@ -436,7 +459,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
 
   Offset? lastPos;
 
-    Future<void> exportToPng() async {
+  Future<void> exportToPng() async {
     if (paintLayer == null) return;
     setState(() => isLoading = true);
     try {
@@ -447,15 +470,24 @@ class _PaintCanvasState extends State<PaintCanvas> {
       if (!dir.existsSync()) {
         dir.createSync(recursive: true);
       }
-      final ts = DateTime.now().toString().replaceAll(":", "_").replaceAll(".", "_").replaceAll("-", "_").replaceAll(" ", "_");
+      final ts = DateTime.now()
+          .toString()
+          .replaceAll(":", "_")
+          .replaceAll(".", "_")
+          .replaceAll("-", "_")
+          .replaceAll(" ", "_");
       final filePath = "$dirPath/kunstwerk_$ts.png";
-      final bd = await paintLayer!.toByteData(format: dart_ui.ImageByteFormat.png);
+      final bd = await paintLayer!.toByteData(
+        format: dart_ui.ImageByteFormat.png,
+      );
       if (bd != null) {
         final bytes = bd.buffer.asUint8List();
         await File(filePath).writeAsBytes(bytes);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Bild erfolgreich gespeichert unter: $filePath")),
+            SnackBar(
+              content: Text("Bild erfolgreich gespeichert unter: $filePath"),
+            ),
           );
         }
       }
