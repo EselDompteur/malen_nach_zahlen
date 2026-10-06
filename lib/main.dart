@@ -123,7 +123,6 @@ class _PaintCanvasState extends State<PaintCanvas> {
           );
           if (dialogResult != null) {
             dart_ui.Image finalImg = dialogResult["image"];
-            bool finalPortrait = dialogResult["portrait"];
             if (finalPortrait) {
               finalImg = await rotateImage90Degrees(finalImg);
             }
@@ -148,12 +147,14 @@ class _PaintCanvasState extends State<PaintCanvas> {
     bool isPdf,
     int totalPages,
   ) {
+    int rotationSteps = 0; // wenn es HIER richtig ist, dann weiß ich nun wo beim letzten mal der Fehler lag!
+
     return showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) {
         int currentPage = 1;
-        bool tempPortrait = true;
+
         Uint8List? dialogPreviewBytes;
         dart_ui.Image? currentLoadedImage;
         bool isDialogLoading = false;
@@ -209,7 +210,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AnimatedRotation(
-                      turns: tempPortrait ? 0.00 : 0.25,
+                      turns: rotationSteps * 0.25,
                       duration: const Duration(milliseconds: 200),
                       child: Container(
                         height: 200,
@@ -290,23 +291,19 @@ class _PaintCanvasState extends State<PaintCanvas> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton.icon(
-                          icon: Icon(
-                            Icons.crop_portrait,
-                            color: tempPortrait ? Colors.green : Colors.grey,
-                          ),
-                          label: const Text("Hochformat"),
-                          onPressed: () =>
-                              setDialogState(() => tempPortrait = true),
+                          icon: const Icon(Icons.rotate_left),
+                          label: const Text("Gegen den Uhrzeigersinn"),
+                          onPressed: () => setDialogState(() {
+                            rotationSteps = (rotationSteps - 1 + 4) % 4;
+                          }),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 15),
                         ElevatedButton.icon(
-                          icon: Icon(
-                            Icons.crop_landscape,
-                            color: !tempPortrait ? Colors.green : Colors.grey,
-                          ),
-                          label: const Text("Querformat"),
-                          onPressed: () =>
-                              setDialogState(() => tempPortrait = false),
+                          icon: const Icon(Icons.rotate_right),
+                          label: const Text("Mit dem Uhrzeigersinn"),
+                          onPressed: () => setDialogState(() {
+                            rotationSteps = (rotationSteps + 1) % 4;
+                          }),
                         ),
                       ],
                     ),
@@ -323,7 +320,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
                       ? null
                       : () => Navigator.of(ctx).pop({
                           "image": currentLoadedImage,
-                          "portrait": tempPortrait,
+                          "rotation": rotationSteps,
                         }),
                   child: const Text("Vorlage laden"),
                 ),
