@@ -436,6 +436,36 @@ class _PaintCanvasState extends State<PaintCanvas> {
 
   Offset? lastPos;
 
+    Future<void> exportToPng() async {
+    if (paintLayer == null) return;
+    setState(() => isLoading = true);
+    try {
+      final home = Platform.environment["HOME"];
+      if (home == null) return;
+      final dirPath = "$home/Bilder/Enkel_Kunst";
+      final dir = Directory(dirPath);
+      if (!dir.existsSync()) {
+        dir.createSync(recursive: true);
+      }
+      final ts = DateTime.now().toString().replaceAll(RegExp(r"[:.- ]"), "_");
+      final filePath = "$dirPath/kunstwerk_$ts.png";
+      final bd = await paintLayer!.toByteData(format: dart_ui.ImageByteFormat.png);
+      if (bd != null) {
+        final bytes = bd.buffer.asUint8List();
+        await File(filePath).writeAsBytes(bytes);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Bild erfolgreich gespeichert unter: $filePath")),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Fehler beim Speichern: $e");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
