@@ -123,13 +123,16 @@ class _PaintCanvasState extends State<PaintCanvas> {
           );
           if (dialogResult != null) {
             dart_ui.Image finalImg = dialogResult["image"];
-            if (finalPortrait) {
+            int finalRotation = dialogResult["rotation"];
+
+            for (int i = 0; i < finalRotation; i++) {
               finalImg = await rotateImage90Degrees(finalImg);
             }
+
             setState(() {
               templateImage = finalImg;
-              isPortraitMode = finalPortrait;
               undoHistory.clear();
+              _zoomController.value = Matrix4.identity();
             });
             await initPaintLayer(finalImg.width, finalImg.height);
           }
@@ -147,7 +150,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
     bool isPdf,
     int totalPages,
   ) {
-    int rotationSteps = 0; // wenn es HIER richtig ist, dann weiß ich nun wo beim letzten mal der Fehler lag!
+    int rotationSteps = 0;
 
     return showDialog<Map<String, dynamic>>(
       context: context,
@@ -294,7 +297,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
                           icon: const Icon(Icons.rotate_left),
                           label: const Text("Gegen den Uhrzeigersinn"),
                           onPressed: () => setDialogState(() {
-                            rotationSteps = (rotationSteps - 1 + 4) % 4;
+                            rotationSteps--;
                           }),
                         ),
                         const SizedBox(width: 15),
@@ -302,7 +305,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
                           icon: const Icon(Icons.rotate_right),
                           label: const Text("Mit dem Uhrzeigersinn"),
                           onPressed: () => setDialogState(() {
-                            rotationSteps = (rotationSteps + 1) % 4;
+                            rotationSteps++;
                           }),
                         ),
                       ],
@@ -318,10 +321,13 @@ class _PaintCanvasState extends State<PaintCanvas> {
                 ElevatedButton(
                   onPressed: (isDialogLoading || currentLoadedImage == null)
                       ? null
-                      : () => Navigator.of(ctx).pop({
-                          "image": currentLoadedImage,
-                          "rotation": rotationSteps,
-                        }),
+                      : () {
+                          int finalCleanRotation = (rotationSteps % 4 + 4) % 4;
+                          Navigator.of(ctx).pop({
+                            "image": currentLoadedImage,
+                            "rotation": finalCleanRotation,
+                          });
+                        },
                   child: const Text("Vorlage laden"),
                 ),
               ],
