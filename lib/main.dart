@@ -502,7 +502,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Paint by Numbers Prototyp"),
+        title: const Text("Paint by Numbers Prototyp - Build 1"),
         actions: [
           IconButton(
             icon: const Icon(Icons.undo),
@@ -544,11 +544,7 @@ class _PaintCanvasState extends State<PaintCanvas> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ...[
-                  Colors.blue,
-                  Colors.red,
-                  Colors.green,
-                  Colors.yellow,
-                  Colors.black,
+                  Colors.blue, Colors.red, Colors.green, Colors.yellow, Colors.orange, Colors.purple, Colors.pink, Colors.white, Colors.grey, Colors.black,
                 ].map(
                   (color) => GestureDetector(
                     onTap: () => setState(() => activeColor = color),
