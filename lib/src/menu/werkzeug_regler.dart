@@ -8,25 +8,39 @@ class WerkzeugRegler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Da wir im AppState spaeter einen MalModus deklarieren koennen,
-    // nutzen wir hier vorerst eine saubere, temporäre String-Erkennung
+    final MalModus modus = state.aktuellerModus;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // 1. Der Stift-Button
         IconButton(
-          icon: const Icon(Icons.edit),
+          icon: Icon(
+            Icons.edit,
+            color: modus == MalModus.stift ? Colors.blue : Colors.black54,
+          ),
           tooltip: "Stift",
-          onPressed: () => print("Stift ausgewaehlt"),
+          onPressed: () => state.setMalModus(MalModus.stift),
         ),
+
+        // 2. Der Fülleimer-Button
         IconButton(
-          icon: const Icon(Icons.format_color_fill),
+          icon: Icon(
+            Icons.format_color_fill,
+            color: modus == MalModus.eimer ? Colors.blue : Colors.black54,
+          ),
           tooltip: "Fuelleimer",
-          onPressed: () => print("Fuelleimer ausgewaehlt"),
+          onPressed: () => state.setMalModus(MalModus.eimer),
         ),
+
+        // 3. Die Pipette
         IconButton(
-          icon: const Icon(Icons.colorize),
+          icon: Icon(
+            Icons.colorize,
+            color: modus == MalModus.pipette ? Colors.blue : Colors.black54,
+          ),
           tooltip: "Pipette",
-          onPressed: () => print("Pipette ausgewaehlt"),
+          onPressed: () => state.setMalModus(MalModus.pipette),
         ),
       ],
     );

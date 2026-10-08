@@ -1,3 +1,4 @@
+import "src/menu/steuer_leiste.dart";
 import "package:flutter/material.dart";
 import "src/head/app_state.dart";
 import "src/menu/poveronoff_regler.dart";
@@ -65,22 +66,15 @@ class _MalenNachZahlenInterfaceState extends State<MalenNachZahlenInterface> {
       ),
       body: Column(
         children: [
-          Container(
-            color: Colors.black26,
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: FarbLeiste(state: _appState)),
-                const SizedBox(width: 16),
-                PoveronoffRegler(state: _appState),
-              ],
-            ),
-          ),
+          // 1. Das komplett gekapselte Menu-Modul includieren!
+          SteuerLeiste(state: _appState),
           const Divider(height: 1, color: Colors.white10),
-          MalFeld(
-            state: _appState,
-            zoomController: _zoomController,
+          // 2. Das Malfeld bekommt unmissverstaendlich den gesamten restlichen Platz
+          Expanded(
+            child: MalFeld(
+              state: _appState,
+              zoomController: _zoomController,
+            ),
           ),
         ],
       ),

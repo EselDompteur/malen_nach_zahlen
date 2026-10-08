@@ -31,7 +31,7 @@ class MalFeld extends StatelessWidget {
           final int pixelY = ((lokalePosition.dy - translationY) / scale).toInt();
 
           // Hier schlägt die unbestechliche Klick-Weiche zu!
-          if (state.kantenschutzAktiv) {
+          if (state.kantenSchutzAktiv) {
             // Wenn Genosse Poveronoff aktiv ist, zünden wir die isolierte Engine händisch an!
             print("Kantenschutz feuert bei Pixel: $pixelX, $pixelY");
 

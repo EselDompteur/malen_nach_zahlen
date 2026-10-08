@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum MalModus { stift, eimer, pipette }
+
 class AppState extends ChangeNotifier {
   // --- Zustand: Allgemeine App-Metadaten ---
   final String appTitel = "Paint by Numbers Prototyp";
@@ -9,15 +11,17 @@ class AppState extends ChangeNotifier {
   Color _aktiveFarbe = Colors.red;
   double _pinselBreite = 5.0;
   bool _auslaufSchutzAktiv = false;
+  bool _kantenSchutzAktiv = false;
 
-  // Genosse Poveronoffs unbestechlicher Kantenschutz
-  bool _kantenschutzAktiv = false;
+  // Das aktive Werkzeug im Hangar (Standard: Fülleimer)
+  MalModus _aktuellerModus = MalModus.eimer;
 
   // --- Getter: Damit die UI-Kompnenten die Werte nur LESEN duerfen ---
   Color get aktiveFarbe => _aktiveFarbe;
   double get pinselBreite => _pinselBreite;
   bool get auslaufSchutzAktiv => _auslaufSchutzAktiv;
-  bool get kantenschutzAktiv => _kantenschutzAktiv;
+  bool get kantenSchutzAktiv => _kantenSchutzAktiv;
+  MalModus get aktuellerModus => _aktuellerModus;
 
   // --- Setter: Saubere Methoden, um die Werte kontrolliert zu VERAENDERN ---
   void wechsleFarbe(Color neueFarbe) {
@@ -36,7 +40,12 @@ class AppState extends ChangeNotifier {
   }
 
   void toggleKantenschutz() {
-    _kantenschutzAktiv = !_kantenschutzAktiv;
+    _kantenSchutzAktiv = !_kantenSchutzAktiv;
     notifyListeners(); // Zündet das visuelle Umschalten des russischen Schalters!
+  }
+
+  void setMalModus(MalModus neuerModus) {
+    _aktuellerModus = neuerModus;
+    notifyListeners(); // Zuendet das visuelle Umschalten in der Toolbar!
   }
 }

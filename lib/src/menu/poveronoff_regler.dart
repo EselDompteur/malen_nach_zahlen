@@ -9,7 +9,7 @@ class PoveronoffRegler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Der Schalter lauscht direkt auf den Zustand aus dem Head-Modul
-    final bool aktiv = state.kantenschutzAktiv;
+    final bool aktiv = state.kantenSchutzAktiv;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

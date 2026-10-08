@@ -12,20 +12,32 @@ class SteuerLeiste extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black26,
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          DateiButton(state: state), // Datei-Knopf ganz links
-          const SizedBox(width: 8),
-          WerkzeugRegler(state: state), // Stift, Eimer, Pipette
-          const SizedBox(width: 16),
-          Expanded(child: FarbLeiste(state: state)), // Deine 10 Premium-Farben
-          const SizedBox(width: 16),
-          PoveronoffRegler(state: state), // Genosse Poveronoff ganz rechts
-        ],
+    // Wir nutzen Theme-Zuweisungen, damit die Icons auf dem hellen Silber dunkel und sichtbar sind!
+    return Theme(
+      data: ThemeData(
+        iconTheme: const IconThemeData(color: Colors.black87),
+      ),
+      child: Container(
+        height: 65, // Ein Hauch mehr Atempause fuer die Finger
+        color: const Color(0xFFD5D8DC), // Pures, edles Foederations-Silbergrau!
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        child: Row(
+          children: [
+            DateiButton(state: state),
+            const SizedBox(width: 4),
+
+            // Flexibel anstelle von fester Breite! Schiebt sich bei Bedarf unfallfrei zusammen!
+            Expanded(
+              child: FarbLeiste(state: state),
+            ),
+            const SizedBox(width: 8),
+
+            WerkzeugRegler(state: state),
+            const SizedBox(width: 8),
+
+            PoveronoffRegler(state: state),
+          ],
+        ),
       ),
     );
   }
